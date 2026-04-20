@@ -1,1 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Diamond Bar $1 Beer</title>
 
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1b3c2e, #2e7d5b);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 700px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 30px;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+    }
+
+    .btn {
+      display: block;
+      margin: 12px auto;
+      padding: 14px;
+      border-radius: 10px;
+      font-weight: bold;
+      text-decoration: none;
+      width: 260px;
+    }
+
+    .instagram { background: white; color: #2e7d5b; }
+    .reviews { background: gold; color: black; }
+    .claim { background: black; color: white; border: none; }
+
+    .claim:disabled {
+      opacity: 0.5;
+    }
+
+    .code-box {
+      margin-top: 20px;
+      display: none;
+    }
+
+    .code {
+      background: white;
+      color: black;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 1.5rem;
+      margin-top: 10px;
+    }
+
+    .small {
+      margin-top: 20px;
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>You are that much closer to a $1 beer 🍺</h1>
+  <p>Follow us and leave a review to unlock your code.</p>
+
+  <a class="btn instagram"
+     href="https://www.instagram.com/"
+     target="_blank"
+     onclick="clickIG()">
+     Visit Instagram
+  </a>
+
+  <a class="btn reviews"
+     href="https://www.google.com/search?q=diamond+bar+golf+course+reviews"
+     target="_blank"
+     onclick="clickReviews()">
+     Leave a Review
+  </a>
+
+  <button id="claimBtn" class="btn claim" onclick="claimCode()" disabled>
+    Claim Code
+  </button>
+
+  <div id="codeBox" class="code-box">
+    <div>Your code:</div>
+    <div id="code" class="code"></div>
+    <div id="validText"></div>
+  </div>
+
+  <div class="small">
+    Limit one code per device.
+  </div>
+</div>
+
+<script>
+function pad(n){ return n.toString().padStart(2,'0'); }
+
+function todayKey(){
+  const d = new Date();
+  return pad(d.getMonth()+1)+pad(d.getDate());
+}
+
+function generateCode(){
+  const num = Math.floor(100 + Math.random()*900);
+  return "DB"+todayKey()+"-"+num;
+}
+
+function clickIG(){
+  localStorage.setItem("ig","true");
+  update();
+}
+
+function clickReviews(){
+  localStorage.setItem("rev","true");
+  update();
+}
+
+function update(){
+  const ig = localStorage.getItem("ig")==="true";
+  const rev = localStorage.getItem("rev")==="true";
+  const claimed = localStorage.getItem("claimed")==="true";
+
+  if(ig && rev && !claimed){
+    document.getElementById("claimBtn").disabled = false;
+  }
+
+  if(claimed){
+    showSaved();
+  }
+}
+
+function claimCode(){
+  const code = generateCode();
+  localStorage.setItem("claimed","true");
+  localStorage.setItem("code",code);
+  localStorage.setItem("date",todayKey());
+
+  document.getElementById("code").innerText = code;
+  document.getElementById("validText").innerText = "Valid today only";
+  document.getElementById("codeBox").style.display = "block";
+}
+
+function showSaved(){
+  const code = localStorage.getItem("code");
+  const date = localStorage.getItem("date");
+
+  if(!code) return;
+
+  document.getElementById("code").innerText = code;
+  document.getElementById("codeBox").style.display = "block";
+
+  if(date !== todayKey()){
+    document.getElementById("validText").innerText = "Expired code";
+  } else {
+    document.getElementById("validText").innerText = "Valid today only";
+  }
+}
+
+update();
+</script>
+
+</body>
+</html>
